@@ -53,6 +53,9 @@ function renderProductRow(p, index) {
     <td class="sku">${p.sku}</td>
     <td><span class="stock-value" id="stock-${p.id}">${getStock(p.id, currentAlmacenId)}</span></td>
     <td class="col-actions">
+      <button class="btn-restock" data-id="${p.id}" aria-label="Reponer stock de ${p.nombre}" title="Reponer stock">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"></path><path d="M1 3h22v5H1z"></path><line x1="10" y1="12" x2="14" y2="12"></line><line x1="12" y1="10" x2="12" y2="14"></line></svg>
+      </button>
       <button class="btn-qty btn-minus" data-id="${p.id}" data-action="dec" aria-label="Restar unidad de ${p.nombre}">−</button>
       <button class="btn-qty btn-plus" data-id="${p.id}" data-action="inc" aria-label="Sumar unidad de ${p.nombre}">+</button>
     </td>
@@ -102,6 +105,12 @@ function changeProductStock(id, delta) {
 }
 
 productsBody.addEventListener("click", (event) => {
+  const restockBtn = event.target.closest(".btn-restock");
+  if (restockBtn) {
+    openRestockModal(Number(restockBtn.dataset.id));
+    return;
+  }
+
   const qtyBtn = event.target.closest(".btn-qty");
   if (qtyBtn) {
     const id = Number(qtyBtn.dataset.id);
