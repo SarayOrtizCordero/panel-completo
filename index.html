@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de Inventario — Completo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.89 1.45l8 4A2 2 0 0 1 22 7.24v9.53a2 2 0 0 1-1.11 1.79l-8 4a2 2 0 0 1-1.79 0l-8-4a2 2 0 0 1-1.11-1.8V7.24a2 2 0 0 1 1.11-1.79l8-4a2 2 0 0 1 1.79 0z"></path><polyline points="2.32 6.16 12 11 21.68 6.16"></polyline><line x1="12" y1="22.76" x2="12" y2="11"></line></svg>
+      </span>
+      <h1>Panel de Inventario</h1>
+      <span class="badge-plan">Completo</span>
+    </div>
+
+    <div class="header-actions">
+      <div class="warehouse-picker">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <select id="warehouseSelect" aria-label="Seleccionar almacén"></select>
+      </div>
+
+      <a class="btn-store-link" href="./tienda/tienda.html" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        Tienda de pruebas
+      </a>
+    </div>
+  </header>
+
+  <div class="scanner-bar">
+    <svg class="scanner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path><line x1="7" y1="8" x2="7" y2="16"></line><line x1="11" y1="8" x2="11" y2="16"></line><line x1="14" y1="8" x2="14" y2="16"></line><line x1="18" y1="8" x2="18" y2="16"></line></svg>
+    <input type="text" id="barcodeInput" placeholder="Escanea o escribe un código de barras y pulsa Enter…" autocomplete="off">
+    <button class="btn-scan" id="simulateScanBtn">Simular escaneo</button>
+  </div>
+
+  <nav class="tabs">
+    <button class="nav-btn active" data-view="view-inventario">Inventario</button>
+    <button class="nav-btn" data-view="view-financiero">Financiero</button>
+  </nav>
+
+  <!-- Vista: Inventario -->
+  <section class="view active" id="view-inventario">
+    <div class="stat-grid">
+      <div class="card card-stat">
+        <div class="stat-icon stat-icon--total">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Total de productos</span>
+          <span class="stat-value" id="totalProductos">0</span>
+        </div>
+      </div>
+
+      <div class="card card-stat">
+        <div class="stat-icon stat-icon--ok">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Listos para vender</span>
+          <span class="stat-value" id="totalListos">0</span>
+        </div>
+      </div>
+
+      <div class="card card-stat">
+        <div class="stat-icon stat-icon--warehouse">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Almacén activo</span>
+          <span class="stat-value stat-value--text" id="almacenActivoLabel">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-section">
+      <div class="table-header">
+        <h2>Productos</h2>
+        <span class="table-sub">Gestiona el stock en tiempo real</span>
+      </div>
+      <div class="table-wrap">
+        <table class="products-table">
+          <thead>
+            <tr>
+              <th class="col-photo"></th>
+              <th>Producto</th>
+              <th>SKU</th>
+              <th>Stock</th>
+              <th class="col-actions">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="productsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vista: Financiero -->
+  <section class="view" id="view-financiero">
+    <div class="stat-grid stat-grid--finance">
+      <div class="card card-stat card-stat--finance">
+        <div class="stat-icon stat-icon--total">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Valor total del stock — <span id="financeAlmacenLabel">—</span></span>
+          <span class="stat-value" id="valorStockTotal">0 €</span>
+        </div>
+      </div>
+
+      <div class="card card-stat card-stat--finance">
+        <div class="stat-icon stat-icon--sales">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Beneficio estimado si se vende todo</span>
+          <span class="stat-value" id="beneficioTotal">0 €</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card chart-card-lg">
+      <div class="finance-chart-header">
+        <div>
+          <h3>Evolución financiera</h3>
+          <p class="chart-sub">Últimos 30 días — <span id="financeAlmacenLabel2">—</span></p>
+        </div>
+        <div class="finance-legend">
+          <span class="legend-chip">
+            <i class="dot dot--primary"></i>Valor del stock
+            <span class="delta-chip" id="deltaValor">—</span>
+          </span>
+          <span class="legend-chip">
+            <i class="dot dot--ok"></i>Beneficio estimado
+            <span class="delta-chip" id="deltaBeneficio">—</span>
+          </span>
+        </div>
+      </div>
+      <div class="finance-chart-wrap" id="financeChartWrap"></div>
+    </div>
+
+    <div class="table-section">
+      <div class="table-header">
+        <h2>Desglose por producto</h2>
+        <span class="table-sub">Coste, precio de venta y margen</span>
+      </div>
+      <div class="table-wrap">
+        <table class="products-table finance-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Stock</th>
+              <th>Coste/ud.</th>
+              <th>Venta/ud.</th>
+              <th>Margen/ud.</th>
+              <th>Valor stock</th>
+              <th>Beneficio</th>
+            </tr>
+          </thead>
+          <tbody id="financeBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Modal: Trazabilidad por lote -->
+<div class="modal-overlay" id="batchesModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h3 id="batchesTitle">Producto</h3>
+        <p class="modal-sub">Trazabilidad por lote — <span id="batchesAlmacen">—</span></p>
+      </div>
+      <button class="modal-close" id="batchesClose" aria-label="Cerrar">&times;</button>
+    </div>
+    <div class="batch-list" id="batchesBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/store.js"></script>
+<script src="js/warehouse.js"></script>
+<script src="js/products.js"></script>
+<script src="js/batches.js"></script>
+<script src="js/barcode.js"></script>
+<script src="js/finance.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
